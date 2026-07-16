@@ -1,15 +1,7 @@
-// Strictly generic health check / ping controller
-// No domain or business-specific logic
+class PingController {
+  static ping(req, res) {
+    return res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+  }
+}
 
-const getPing = (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    message: 'pong',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-  });
-};
-
-module.exports = {
-  getPing,
-};
+module.exports = PingController;

@@ -1,27 +1,26 @@
 const express = require('express');
 const cors = require('cors');
-const morgan = require('morgan');
-require('dotenv').config();
-
+const logger = require('./middleware/logger');
 const routes = require('./routes');
-const { errorHandler, notFoundHandler } = require('./middleware');
 
 const app = express();
 
-// Standard Middlewares
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(logger);
 
-if (process.env.NODE_ENV !== 'test') {
-  app.use(morgan('dev'));
-}
-
-// API Routes
+// Register routes
 app.use('/api', routes);
 
-// Error handling & 404
-app.use(notFoundHandler);
-app.use(errorHandler);
+// Global Error Handler
+app.use((err, req, res, next) => {
+  console.error('[ERROR]', err.message || err);
+  res.status(err.status || 500).json({
+    error: {
+      message: err.message || 'Internal Server Error',
+      status: err.status || 500,
+    },
+  });
+});
 
 module.exports = app;
