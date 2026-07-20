@@ -3,6 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const healthRoutes = require('./routes/healthRoutes');
+const authRoutes = require('./routes/authRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -13,7 +14,9 @@ app.use(morgan('combined'));
 app.use(express.json());
 
 app.use('/api', healthRoutes);
+app.use('/users', authRoutes);
 
 app.use(errorHandler);
 
 module.exports = app;
+
