@@ -1,26 +1,19 @@
 const express = require('express');
 const cors = require('cors');
-const logger = require('./middleware/logger');
-const routes = require('./routes');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const healthRoutes = require('./routes/healthRoutes');
+const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
+app.use(helmet());
 app.use(cors());
+app.use(morgan('combined'));
 app.use(express.json());
-app.use(logger);
 
-// Register routes
-app.use('/api', routes);
+app.use('/api', healthRoutes);
 
-// Global Error Handler
-app.use((err, req, res, next) => {
-  console.error('[ERROR]', err.message || err);
-  res.status(err.status || 500).json({
-    error: {
-      message: err.message || 'Internal Server Error',
-      status: err.status || 500,
-    },
-  });
-});
+app.use(errorHandler);
 
 module.exports = app;
